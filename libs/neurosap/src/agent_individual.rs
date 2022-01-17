@@ -30,7 +30,7 @@ impl AgentIndividual {
         }
     }
 
-    pub fn into_creature(self) -> Agent {
+    pub fn into_agent(self) -> Agent {
         Agent::from_chromosome(self.chromosome)
     }
 }
