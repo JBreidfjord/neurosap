@@ -11,3 +11,6 @@ crate-type = ["cdylib"]
 [dependencies.pyo3]
 version = "0.15.1"
 features = ["extension-module"]
+
+[dependencies]
+NeuroSAP = { path = "../neurosap" }
