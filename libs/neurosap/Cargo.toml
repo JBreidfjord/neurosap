@@ -1,0 +1,11 @@
+[package]
+name = "NeuroSAP"
+version = "0.1.0"
+author = "Jonathan Breidfjord <jbreidfjord@gmail.com>"
+edition = "2021"
+
+[dependencies]
+lib-neural-network = { path = "../neural-network" }
+lib-genetic-algorithm = { path = "../genetic-algorithm" }
+rand = "0.8.4"
+nalgebra = { version = "0.30.1", features = ["rand-no-std"] }

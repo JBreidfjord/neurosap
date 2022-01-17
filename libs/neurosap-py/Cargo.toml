@@ -1,0 +1,13 @@
+[package]
+name = "neurosap-py"
+version = "0.1.0"
+author = "Jonathan Breidfjord <jbreidfjord@gmail.com>"
+edition = "2021"
+
+[lib]
+name = "neurosap"
+crate-type = ["cdylib"]
+
+[dependencies.pyo3]
+version = "0.15.1"
+features = ["extension-module"]
