@@ -1,7 +1,6 @@
 #![feature(crate_visibility_modifier)]
 
-use nalgebra as na;
-use rand::{Rng, RngCore};
+use rand::RngCore;
 
 use lib_genetic_algorithm as ga;
 use lib_neural_network as nn;
@@ -30,13 +29,36 @@ impl NeuroSAP {
         NeuroSAP { population, ga }
     }
 
-    pub fn population(&self) -> &Vec<Agent> {
-        &self.population
+    pub fn step(&self, inputs: Vec<f32>) -> Vec<f32> {
+        let mut outputs = Vec::<f32>::new();
+        for agent in self.population.iter() {
+            if agent.finished {
+                continue;
+            }
+
+            outputs = agent.brain.nn.propagate(inputs);
+            break;
+        }
+
+        if outputs.is_empty() {
+            panic!("No agents found!");
+        } else {
+            outputs
+        }
     }
 
-    pub fn evolve(&mut self, rng: &mut dyn RngCore) -> bool {
+    pub fn finish_agent(&mut self) {
+        for agent in self.population.iter_mut() {
+            if !agent.finished {
+                agent.finish();
+                break;
+            }
+        }
+    }
+
+    pub fn evolve(&mut self, rng: &mut dyn RngCore) {
         if self.population.iter().any(|agent| !agent.finished) {
-            return false;
+            panic!("Population not finished!");
         }
 
         // Transform Vec<Agent> into Vec<AgentIndividual>
@@ -51,10 +73,8 @@ impl NeuroSAP {
 
         // Transform Vec<AgentIndividual> into Vec<Agent>
         self.population = new_population
-            .iter()
-            .map(AgentIndividual::into_agent)
+            .into_iter()
+            .map(|individual| individual.into_agent())
             .collect();
-
-        true
     }
 }

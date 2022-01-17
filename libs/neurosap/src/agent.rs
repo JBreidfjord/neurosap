@@ -1,6 +1,6 @@
 use crate::*;
 
-struct Agent {
+pub struct Agent {
     crate brain: Brain,
     crate fitness: f32,
     crate finished: bool,
@@ -9,15 +9,7 @@ struct Agent {
 impl Agent {
     pub fn random(rng: &mut dyn RngCore) -> Agent {
         Agent {
-            brain: Brain,
-            fitness: 0.0,
-            finished: false,
-        }
-    }
-
-    fn new(brain: Brain, rng: &mut dyn RngCore) -> Agent {
-        Agent {
-            brain,
+            brain: Brain::random(rng),
             fitness: 0.0,
             finished: false,
         }
@@ -39,7 +31,7 @@ impl Agent {
         self.fitness
     }
 
-    pub fn finish(&self) {
+    pub fn finish(&mut self) {
         self.finished = true;
     }
 }
