@@ -14,7 +14,7 @@ def get_game_imgs():
     game_img = cv2.cvtColor(game_rgb, cv2.COLOR_BGR2GRAY)
     game_img = cv2.Canny(game_img, 50, 200)
 
-    # pyautogui.screenshot("images/levels/1_0.png", region=(941, 561, 40, 40))
+    pyautogui.screenshot("1_1.png", region=(941, 561, 40, 40))
 
     return game_rgb, game_img
 
@@ -87,6 +87,7 @@ def display_data(data: list[int]):
     shop = ["", "", "", "", ""]
     food = ["", ""]
     for i, x in enumerate(data):
+        out = ""
         if x == -1:
             continue
 
@@ -118,5 +119,9 @@ def display_data(data: list[int]):
             idx = food_id_indices.index(i)
             food[idx] = food_index[x]
         else:
-            print(f"{encoding_index[i]}: {x}")
-    print(team, shop, food, sep="\n")
+            out += f"{encoding_index[i]}: {x}\n"
+    out += " | ".join(team) + "\n"
+    out += " | ".join(shop) + "\n"
+    out += " | ".join(food)
+    
+    return out
