@@ -1,5 +1,7 @@
 import os
 
+from neurosap import actions
+
 pet_dir = "images/pets/"
 food_dir = "images/foods/"
 pet_index = [f[:-4] for f in sorted(os.listdir(pet_dir))]
@@ -40,7 +42,7 @@ encoding_index = [
     "t4_item_id",
     "t4_lvl",
     "t4_exp",
-    "s0_pet_id",
+    "s0_pet_id",  # 34
     "s0_att",
     "s0_hp",
     "s1_pet_id",
@@ -60,6 +62,71 @@ encoding_index = [
 ]
 
 decoding_index = [
+    actions.t0_to_t1,
+    actions.t0_to_t2,
+    actions.t0_to_t3,
+    actions.t0_to_t4,
+    actions.t1_to_t0,
+    actions.t1_to_t2,
+    actions.t1_to_t3,
+    actions.t1_to_t4,
+    actions.t2_to_t0,
+    actions.t2_to_t1,
+    actions.t2_to_t3,
+    actions.t2_to_t4,
+    actions.t3_to_t0,
+    actions.t3_to_t1,
+    actions.t3_to_t2,
+    actions.t3_to_t4,
+    actions.t4_to_t0,
+    actions.t4_to_t1,
+    actions.t4_to_t2,
+    actions.t4_to_t3,
+    actions.s0_to_t0,  # 20
+    actions.s0_to_t1,
+    actions.s0_to_t2,
+    actions.s0_to_t3,
+    actions.s0_to_t4,
+    actions.s1_to_t0,
+    actions.s1_to_t1,
+    actions.s1_to_t2,
+    actions.s1_to_t3,
+    actions.s1_to_t4,
+    actions.s2_to_t0,
+    actions.s2_to_t1,
+    actions.s2_to_t2,
+    actions.s2_to_t3,
+    actions.s2_to_t4,
+    actions.s3_to_t0,
+    actions.s3_to_t1,
+    actions.s3_to_t2,
+    actions.s3_to_t3,
+    actions.s3_to_t4,
+    actions.s4_to_t0,
+    actions.s4_to_t1,
+    actions.s4_to_t2,
+    actions.s4_to_t3,
+    actions.s4_to_t4,
+    actions.f0_to_t0,  # 45
+    actions.f0_to_t1,
+    actions.f0_to_t2,
+    actions.f0_to_t3,
+    actions.f0_to_t4,
+    actions.f1_to_t0,  # 50
+    actions.f1_to_t1,
+    actions.f1_to_t2,
+    actions.f1_to_t3,
+    actions.f1_to_t4,
+    actions.sell_t0,  # 55
+    actions.sell_t1,
+    actions.sell_t2,
+    actions.sell_t3,
+    actions.sell_t4,
+    actions.roll,
+    actions.end,
+]
+
+decoding_str_index = [
     "t0_to_t1",
     "t0_to_t2",
     "t0_to_t3",
@@ -80,7 +147,7 @@ decoding_index = [
     "t4_to_t1",
     "t4_to_t2",
     "t4_to_t3",
-    "s0_to_t0",
+    "s0_to_t0",  # 20
     "s0_to_t1",
     "s0_to_t2",
     "s0_to_t3",
@@ -105,17 +172,17 @@ decoding_index = [
     "s4_to_t2",
     "s4_to_t3",
     "s4_to_t4",
-    "f0_to_t0",
+    "f0_to_t0",  # 45
     "f0_to_t1",
     "f0_to_t2",
     "f0_to_t3",
     "f0_to_t4",
-    "f1_to_t0",
+    "f1_to_t0",  # 50
     "f1_to_t1",
     "f1_to_t2",
     "f1_to_t3",
     "f1_to_t4",
-    "sell_t0",
+    "sell_t0",  # 55
     "sell_t1",
     "sell_t2",
     "sell_t3",
@@ -123,6 +190,7 @@ decoding_index = [
     "roll",
     "end",
 ]
+
 
 threshold_overrides = {
     "ant": 0.21,
