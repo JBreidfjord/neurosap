@@ -10,9 +10,9 @@ struct NeuroSAP {
 #[pymethods]
 impl NeuroSAP {
     #[new]
-    fn new() -> NeuroSAP {
+    fn new(population_count: usize) -> NeuroSAP {
         NeuroSAP {
-            ns: nsap::NeuroSAP::random(&mut rand::thread_rng()),
+            ns: nsap::NeuroSAP::random(population_count, &mut rand::thread_rng()),
         }
     }
 
