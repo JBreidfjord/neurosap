@@ -6,6 +6,7 @@ from neurosap import actions, neurosap
 from neurosap.encoding import decode, encode
 from neurosap.helpers import display_data, get_game_imgs, get_legal_moves, is_game_over
 from neurosap.index import decoding_str_index as decoding_index
+import logging
 
 
 class SAP:
@@ -16,6 +17,18 @@ class SAP:
         self.data = [-1 for _ in range(51)]
 
         self.timer = 10
+
+    def start(self):
+        logging.info("Starting Generation")
+        for i in range(self.population_count):
+            logging.info(f"Agent {i} | Starting")
+            actions.start()
+            time.sleep(2)
+            while not is_game_over():
+                self.step()
+            
+            logging.info(f"Agent {i} | Game over | Fitness: {self.data[2]}")
+            self.handle_game_over()
 
     def step(self):
         rgb_img, gray_img = get_game_imgs()
@@ -30,13 +43,13 @@ class SAP:
         outputs /= np.sum(outputs)  # Get probabilities
 
         if outputs.argmax() == 61 or self.timer == 0:
-            print("Turn Ended\nTimer reset")
+            logging.debug(f"Turn {self.data[3]} ended | Timer reset") # self.data[3] is turn
             decode(61)()
             self.timer = 10
             self.handle_combat()
         else:
             idx = outputs.argmax()
-            print(decoding_index[idx])
+            logging.debug(decoding_index[idx])
             decode(idx)()
             self.timer -= 1
             time.sleep(1)
@@ -46,17 +59,10 @@ class SAP:
         for _ in range(20):
             actions.safe()
             time.sleep(0.5)
-
-        if is_game_over():
-            print("Game Over")
-            self.handle_game_over()
-        else:
-            self.step()
             
     def handle_game_over(self):
         if self._finished_agents < self.population_count:
             self.finish_agent(self.data[2]) # Trophies
-            # self.step() # Continue
 
     def finish_agent(self, fitness: float) -> None:
         self.ns.finish_agent(fitness)
@@ -67,6 +73,7 @@ class SAP:
 
     def evolve(self) -> bool:
         if self._finished_agents == self.population_count:
+            logging.info("Evolving population")
             self.ns.evolve()
             return True
         else:
