@@ -1,0 +1,17 @@
+[package]
+name = "neurosap-py"
+version = "0.1.0"
+authors = ["Jonathan Breidfjord <jbreidfjord@gmail.com>"]
+edition = "2021"
+
+[lib]
+name = "neurosap"
+crate-type = ["cdylib"]
+
+[dependencies.pyo3]
+version = "0.15.1"
+features = ["extension-module"]
+
+[dependencies]
+neurosap = { path = "../neurosap" }
+rand = "0.8.4"
