@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-from neurosap.index import encoding_index, food_index, pet_index
 from neurosap.images import (
     att_imgs,
     food_imgs,
@@ -10,6 +9,96 @@ from neurosap.images import (
     pet_imgs,
     trophy_imgs,
 )
+from neurosap.index import (
+    decoding_index,
+    encoding_index,
+    food_index,
+    pet_index,
+    threshold_overrides,
+)
+
+
+def encode(rgb_img, gray_img, data: list[int]):
+    data = encode_pets(gray_img, data)
+    data = encode_foods(gray_img, data)
+    data = encode_trophies(rgb_img, data)
+    data = encode_numeric(gray_img, data)
+    data = encode_stats(rgb_img, data)
+
+    return data
+
+
+def encode_pets(img, data: list[int]):
+    default_threshold = 0.3
+    for pet, pet_img in pet_imgs.items():
+        result = cv2.matchTemplate(img, pet_img, cv2.TM_CCOEFF_NORMED)
+        threshold = threshold_overrides.get(pet, default_threshold)
+        loc = np.where(result >= threshold)
+        if len(loc[0]) > 0:
+            for pt in zip(*loc[::-1]):
+                data = encode_slot(pet, *pt, data)
+
+        if pet in []:  # For finding threshold overrides
+            _, max_val, _, _ = cv2.minMaxLoc(result)
+            print(pet, max_val)
+
+    return data
+
+
+def encode_foods(img, data: list[int]):
+    threshold = 0.2
+    for food, food_img in food_imgs.items():
+        result = cv2.matchTemplate(img, food_img, cv2.TM_CCOEFF_NORMED)
+        loc = np.where(result >= threshold)
+        if len(loc[0]) > 0:
+            for pt in zip(*loc[::-1]):
+                data = encode_slot(food, *pt, data)
+
+    return data
+
+
+def encode_trophies(img, data: list[int]):
+    best_val = 0
+    best = None
+    for i, trophy_img in trophy_imgs.items():
+        result = cv2.matchTemplate(img, trophy_img, cv2.TM_CCOEFF_NORMED)
+        _, max_val, _, _ = cv2.minMaxLoc(result)
+        if max_val > best_val:
+            best_val = max_val
+            best = i
+    data[2] = best
+
+    return data
+
+
+def encode_numeric(img, data: list[int]):
+    for n, num_img in num_imgs.items():
+        n = int(n.replace("_", ""))
+        result = cv2.matchTemplate(img, num_img, cv2.TM_CCOEFF_NORMED)
+        threshold = 0.9
+        loc = np.where(result >= threshold)
+        for pt in zip(*loc[::-1]):
+            data = encode_value_slot(n, *pt, data)
+
+    return data
+
+
+def encode_stats(img, data: list[int]):
+    for att, att_img in att_imgs.items():
+        result = cv2.matchTemplate(img, att_img, cv2.TM_CCOEFF_NORMED)
+        threshold = 0.95
+        loc = np.where(result >= threshold)
+        for pt in zip(*loc[::-1]):
+            data = encode_attack_slot(att, *pt, data)
+
+    for hp, hp_img in hp_imgs.items():
+        result = cv2.matchTemplate(img, hp_img, cv2.TM_CCOEFF_NORMED)
+        threshold = 0.95
+        loc = np.where(result >= threshold)
+        for pt in zip(*loc[::-1]):
+            data = encode_health_slot(hp, *pt, data)
+
+    return data
 
 
 def encode_slot(item: str, x: int, y: int, data: list[int]):
@@ -77,101 +166,6 @@ def encode_health_slot(hp: int, x: int, y: int, data: list[int]):
     data[index] = hp
     return data
 
-# Pets
-default_threshold = 0.3
-threshold_overrides = {
-    "ant": 0.21,
-    "badger": 0.18,
-    "bison": 0.18,
-    "deer": 0.22,
-    "dodo": 0.19,
-    "dog": 0.2,
-    "elephant": 0.28,
-    "fish": 0.19,
-    "giraffe": 0.15,
-    "hippo": 0.2,
-    "kangaroo": 0.2,
-    "mammoth": 0.23,
-    "monkey": 0.13,
-    "parrot": 0.22,
-    "penguin": 0.25,
-    "rat": 0.25,
-    "rhino": 0.24,
-    "rooster": 0.22,
-    "scorpion": 0.14,
-    "shark": 0.25,
-    "sheep": 0.16,
-    "snail": 0.2,
-    "snake": 0.2,
-    "squirrel": 0.26,
-    "swan": 0.2,
-    "tiger": 0.24,
-    "turtle": 0.17,
-}
-for pet, pet_img in pet_imgs.items():
-    result = cv2.matchTemplate(game_img, pet_img, cv2.TM_CCOEFF_NORMED)
-    w = pet_img.shape[1]  # Width
-    h = pet_img.shape[0]  # Height
-    threshold = threshold_overrides.get(pet, default_threshold)
-    loc = np.where(result >= threshold)
-    if len(loc[0]) > 0:
-        game_rgb = cv2.imread("game.png")
-        for pt in zip(*loc[::-1]):
-            data = encode_slot(pet, *pt, data)
 
-    if pet in []:  # For finding threshold overrides
-        _, max_val, _, _ = cv2.minMaxLoc(result)
-        print(pet, max_val)
-
-# Food
-threshold = 0.2
-for food, food_img in food_imgs.items():
-    result = cv2.matchTemplate(game_img, food_img, cv2.TM_CCOEFF_NORMED)
-    w = food_img.shape[1]  # Width
-    h = food_img.shape[0]  # Height
-    loc = np.where(result >= threshold)
-    if len(loc[0]) > 0:
-        game_rgb = cv2.imread("game.png")
-        for pt in zip(*loc[::-1]):
-            data = encode_slot(food, *pt, data)
-
-# Trophies
-best_val = 0
-best = None
-for i, img in trophy_imgs.items():
-    result = cv2.matchTemplate(game_rgb, img, cv2.TM_CCOEFF_NORMED)
-    _, max_val, _, _ = cv2.minMaxLoc(result)
-    if max_val > best_val:
-        best_val = max_val
-        best = i
-data[2] = best
-
-# Numeric Values
-for n, img in num_imgs.items():
-    n = int(n.replace("_", ""))
-    result = cv2.matchTemplate(game_img, img, cv2.TM_CCOEFF_NORMED)
-    h, w = img.shape
-    threshold = 0.9
-    loc = np.where(result >= threshold)
-    for pt in zip(*loc[::-1]):
-        data = encode_value_slot(n, *pt, data)
-
-# Attack
-for att, img in att_imgs.items():
-    result = cv2.matchTemplate(game_rgb, img, cv2.TM_CCOEFF_NORMED)
-    h, w, _ = img.shape
-    threshold = 0.95
-    loc = np.where(result >= threshold)
-    for pt in zip(*loc[::-1]):
-        data = encode_attack_slot(att, *pt, data)
-
-# Health
-for hp, img in hp_imgs.items():
-    result = cv2.matchTemplate(game_rgb, img, cv2.TM_CCOEFF_NORMED)
-    h, w, _ = img.shape
-    threshold = 0.95
-    loc = np.where(result >= threshold)
-    for pt in zip(*loc[::-1]):
-        data = encode_health_slot(hp, *pt, data)
-
-
+def decode(idx: int):
+    return decoding_index[idx]
