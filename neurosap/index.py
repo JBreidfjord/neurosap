@@ -207,6 +207,7 @@ threshold_overrides = {
     "mammoth": 0.23,
     "monkey": 0.13,
     "parrot": 0.22,
+    "peacock": 0.25,
     "penguin": 0.25,
     "rat": 0.25,
     "rhino": 0.24,

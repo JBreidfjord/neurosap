@@ -48,7 +48,7 @@ def encode_pets(img, data: list[int]):
 
 
 def encode_foods(img, data: list[int]):
-    threshold = 0.3
+    threshold = 0.2
     for food, food_img in food_imgs.items():
         result = cv2.matchTemplate(img, food_img, cv2.TM_CCOEFF_NORMED)
         loc = np.where(result >= threshold)
@@ -88,14 +88,14 @@ def encode_numeric(img, data: list[int]):
 def encode_stats(img, data: list[int]):
     for att, att_img in att_imgs.items():
         result = cv2.matchTemplate(img, att_img, cv2.TM_CCOEFF_NORMED)
-        threshold = 0.95
+        threshold = 0.92
         loc = np.where(result >= threshold)
         for pt in zip(*loc[::-1]):
             data = encode_attack_slot(att, *pt, data)
 
     for hp, hp_img in hp_imgs.items():
         result = cv2.matchTemplate(img, hp_img, cv2.TM_CCOEFF_NORMED)
-        threshold = 0.95
+        threshold = 0.92
         loc = np.where(result >= threshold)
         for pt in zip(*loc[::-1]):
             data = encode_health_slot(hp, *pt, data)
@@ -110,7 +110,7 @@ def encode_levels(img, data: list[int]):
         exp = int(exp)
 
         result = cv2.matchTemplate(img, lvl_img, cv2.TM_CCOEFF_NORMED)
-        threshold = 0.95
+        threshold = 0.97
         loc = np.where(result >= threshold)
         for pt in zip(*loc[::-1]):
             data = encode_level_slot(lvl, exp, pt[0], data)
