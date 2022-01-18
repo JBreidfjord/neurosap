@@ -5,8 +5,8 @@ from neurosap.images import (
     att_imgs,
     food_imgs,
     hp_imgs,
-    num_imgs,
     lvl_imgs,
+    num_imgs,
     pet_imgs,
     trophy_imgs,
 )
@@ -48,7 +48,7 @@ def encode_pets(img, data: list[int]):
 
 
 def encode_foods(img, data: list[int]):
-    threshold = 0.2
+    threshold = 0.3
     for food, food_img in food_imgs.items():
         result = cv2.matchTemplate(img, food_img, cv2.TM_CCOEFF_NORMED)
         loc = np.where(result >= threshold)
