@@ -14,8 +14,8 @@ s1 1085 849
 s2 1179 853
 s3 1275 862
 s4 1373 863
-f0 1660 850
-f1 1760 850
+f0 1460 850
+f1 1560 850
 roll 752 1025
 sell 1357 1030
 end 1721 1024
@@ -294,61 +294,61 @@ def s4_to_t4():
 
 
 def f0_to_t0():
-    pyautogui.click(1660, 850)
+    pyautogui.click(1460, 850)
     pyautogui.click(1000, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f0_to_t1():
-    pyautogui.click(1660, 850)
+    pyautogui.click(1460, 850)
     pyautogui.click(1100, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f0_to_t2():
-    pyautogui.click(1660, 850)
+    pyautogui.click(1460, 850)
     pyautogui.click(1200, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f0_to_t3():
-    pyautogui.click(1660, 850)
+    pyautogui.click(1460, 850)
     pyautogui.click(1300, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f0_to_t4():
-    pyautogui.click(1660, 850)
+    pyautogui.click(1460, 850)
     pyautogui.click(1400, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f1_to_t0():
-    pyautogui.click(1760, 850)
+    pyautogui.click(1560, 850)
     pyautogui.click(1000, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f1_to_t1():
-    pyautogui.click(1760, 850)
+    pyautogui.click(1560, 850)
     pyautogui.click(1100, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f1_to_t2():
-    pyautogui.click(1760, 850)
+    pyautogui.click(1560, 850)
     pyautogui.click(1200, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f1_to_t3():
-    pyautogui.click(1760, 850)
+    pyautogui.click(1560, 850)
     pyautogui.click(1300, 670)
     pyautogui.moveTo(704, 762)
 
 
 def f1_to_t4():
-    pyautogui.click(1760, 850)
+    pyautogui.click(1560, 850)
     pyautogui.click(1400, 670)
     pyautogui.moveTo(704, 762)
 
@@ -401,3 +401,10 @@ def start():
 
 def safe():
     pyautogui.click(704, 762)
+    
+
+def abandon():
+    pyautogui.click(1881, 408)
+    pyautogui.click(1252, 778)
+    pyautogui.click(1481, 817)
+    pyautogui.moveTo(704, 762)
