@@ -18,8 +18,8 @@ pub struct NeuroSAP {
 }
 
 impl NeuroSAP {
-    pub fn random(rng: &mut dyn RngCore) -> NeuroSAP {
-        let population: Vec<Agent> = (0..50).map(|_| Agent::random(rng)).collect();
+    pub fn random(population_count: usize, rng: &mut dyn RngCore) -> NeuroSAP {
+        let population: Vec<Agent> = (0..population_count).map(|_| Agent::random(rng)).collect();
         let ga = ga::GeneticAlgorithm::new(
             ga::RouletteWheelSelection::new(),
             ga::UniformCrossover::new(),
