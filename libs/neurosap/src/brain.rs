@@ -27,7 +27,7 @@ impl Brain {
                 neurons: 51, // Input size
             },
             nn::LayerTopology {
-                neurons: 128, // Hidden layer size
+                neurons: 256, // Hidden layer size
             },
             nn::LayerTopology {
                 neurons: 62, // Output size
