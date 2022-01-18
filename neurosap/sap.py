@@ -13,14 +13,14 @@ class SAP:
     def __init__(self, population_count: int = 10):
         self.population_count = population_count
         self.ns = neurosap.NeuroSAP(population_count)
-        self._finished_agents = 0
+        self.finished_agents = 0
         self.data = [-1 for _ in range(51)]
 
         self.timer = 10
 
     def start(self):
         logging.info("Starting Generation")
-        for i in range(self.population_count):
+        for i in range(self.population_count - self.finished_agents):
             logging.info(f"Agent {i} | Starting")
             actions.start()
             time.sleep(2)
@@ -52,7 +52,7 @@ class SAP:
             logging.debug(decoding_index[idx])
             decode(idx)()
             self.timer -= 1
-            time.sleep(1)
+            time.sleep(0.5)
             self.step()
 
     def handle_combat(self):
@@ -61,23 +61,20 @@ class SAP:
             time.sleep(0.5)
             
     def handle_game_over(self):
-        if self._finished_agents < self.population_count:
+        if self.finished_agents < self.population_count:
             self.finish_agent(self.data[2]) # Trophies
 
     def finish_agent(self, fitness: float) -> None:
         self.ns.finish_agent(fitness)
-        self._finished_agents += 1
-        if self._finished_agents == self.population_count:
+        self.finished_agents += 1
+        if self.finished_agents == self.population_count:
             self.ns.evolve()
-            self._finished_agents = 0
+            self.finished_agents = 0
 
     def evolve(self) -> bool:
-        if self._finished_agents == self.population_count:
+        if self.finished_agents == self.population_count:
             logging.info("Evolving population")
             self.ns.evolve()
-            return True
-        else:
-            return False
 
     def display_data(self):
         display_data(self.data)
