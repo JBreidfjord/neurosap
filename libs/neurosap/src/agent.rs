@@ -31,7 +31,8 @@ impl Agent {
         self.fitness
     }
 
-    pub fn finish(&mut self) {
+    pub fn finish(&mut self, fitness: f32) {
+        self.fitness = fitness;
         self.finished = true;
     }
 }

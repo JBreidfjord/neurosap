@@ -24,8 +24,8 @@ impl NeuroSAP {
         self.ns.evolve(&mut rand::thread_rng());
     }
 
-    fn finish_agent(&mut self) {
-        self.ns.finish_agent();
+    fn finish_agent(&mut self, fitness: f32) {
+        self.ns.finish_agent(fitness);
     }
 }
 

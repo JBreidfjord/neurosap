@@ -47,10 +47,10 @@ impl NeuroSAP {
         }
     }
 
-    pub fn finish_agent(&mut self) {
+    pub fn finish_agent(&mut self, fitness: f32) {
         for agent in self.population.iter_mut() {
             if !agent.finished {
-                agent.finish();
+                agent.finish(fitness);
                 break;
             }
         }
