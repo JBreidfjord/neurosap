@@ -22,11 +22,13 @@ class SAP:
         logging.info("Starting Generation")
         for i in range(self.population_count - self.finished_agents):
             logging.info(f"Agent {i} | Starting")
+            self.turn_time = time.perf_counter()
             actions.start()
             time.sleep(2)
             while not is_game_over():
+                self.start_time = time.perf_counter()
                 self.step()
-            
+
             logging.info(f"Agent {i} | Game over | Fitness: {self.data[2]}")
             self.handle_game_over()
 
@@ -43,26 +45,31 @@ class SAP:
         outputs /= np.sum(outputs)  # Get probabilities
 
         if outputs.argmax() == 61 or self.timer == 0:
-            logging.debug(f"Turn {self.data[3]} ended | Timer reset") # self.data[3] is turn
+            # self.data[3] is turn
+            logging.debug(
+                f"Turn {self.data[3]} ended | Timer reset | "
+                + f"{time.perf_counter() - self.turn_time:.2f}s"
+            )
             decode(61)()
             self.timer = 10
             self.handle_combat()
         else:
             idx = outputs.argmax()
-            logging.debug(decoding_index[idx])
+            logging.debug(decoding_index[idx] + f" | {time.perf_counter() - self.start_time:.2f}s")
             decode(idx)()
             self.timer -= 1
             time.sleep(0.5)
-            self.step()
 
     def handle_combat(self):
         for _ in range(20):
             actions.safe()
             time.sleep(0.5)
-            
+        self.turn_time = time.perf_counter()
+
     def handle_game_over(self):
         if self.finished_agents < self.population_count:
-            self.finish_agent(self.data[2]) # Trophies
+            # 2 * Trophies + Turns (past 6)
+            self.finish_agent(self.data[2] * 2 + self.data[3] - 6)
 
     def finish_agent(self, fitness: float) -> None:
         self.ns.finish_agent(fitness)
