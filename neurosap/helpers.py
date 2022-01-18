@@ -14,7 +14,19 @@ def get_game_imgs():
     game_img = cv2.cvtColor(game_rgb, cv2.COLOR_BGR2GRAY)
     game_img = cv2.Canny(game_img, 50, 200)
 
-    pyautogui.screenshot("1_1.png", region=(941, 561, 40, 40))
+    # Additional screenshots
+    pyautogui.screenshot("temp/coin.png", region=(700, 392, 40, 40))
+    pyautogui.screenshot("temp/turn.png", region=(1065, 392, 40, 40))
+    pyautogui.screenshot("temp/trophy.png", region=(913, 392, 65, 40))
+    pyautogui.screenshot("temp/lives.png", region=(810, 392, 40, 40))
+
+    pyautogui.screenshot("temp/t0_att.png", region=(950, 683, 40, 40))
+    pyautogui.screenshot("temp/t0_hp.png", region=(996, 683, 40, 40))
+
+    pyautogui.screenshot("temp/s0_att.png", region=(950, 873, 40, 40))
+    pyautogui.screenshot("temp/s0_hp.png", region=(996, 873, 40, 40))
+
+    pyautogui.screenshot("3_0.png", region=(941, 561, 40, 40))
 
     return game_rgb, game_img
 
@@ -59,13 +71,13 @@ def get_legal_moves(data: list[int]):
             legal[45 + i] = True  # No food
             legal[50 + i] = True  # No food
             legal[55 + i] = True  # No sell
-            
-    for i, j in enumerate(range(34, 49, 3)): # Shop pet ids
+
+    for i, j in enumerate(range(34, 49, 3)):  # Shop pet ids
         if data[j] == -1:  # Can't interact with pets that don't exist
             for k in range(20 + i * 5, 25 + i * 5):
                 legal[k] = True
-                
-    for i, j in enumerate(range(50, 52)): # Food ids
+
+    for i, j in enumerate([49, 50]):  # Food ids
         if data[j] == -1:
             for k in range(45 + i * 5, 50 + i * 5):
                 legal[k] = True
@@ -74,9 +86,11 @@ def get_legal_moves(data: list[int]):
 
 
 def display_data(data: list[int]):
+    out = "Info:\n"
     team_id_indices = [4, 10, 16, 22, 28]
     team_att_indices = [5, 11, 17, 23, 29]
     team_hp_indices = [6, 12, 18, 24, 30]
+    team_item_indices = [7, 13, 19, 25, 31]
     team_lvl_indices = [8, 14, 20, 26, 32]
     team_exp_indices = [9, 15, 21, 27, 33]
     shop_id_indices = [34, 37, 40, 43, 46]
@@ -87,41 +101,49 @@ def display_data(data: list[int]):
     shop = ["", "", "", "", ""]
     food = ["", ""]
     for i, x in enumerate(data):
-        out = ""
         if x == -1:
             continue
 
         if i in team_id_indices:
             idx = team_id_indices.index(i)
-            team[idx] = pet_index[x]
+            team[idx] = "[" + pet_index[x]
         elif i in team_att_indices:
             idx = team_att_indices.index(i)
             team[idx] += f" ({x}|"
         elif i in team_hp_indices:
             idx = team_hp_indices.index(i)
             team[idx] += f"{x})"
+        elif i in team_item_indices:
+            idx = team_item_indices.index(i)
+            team[idx] += f"(i{x})"
         elif i in team_lvl_indices:
             idx = team_lvl_indices.index(i)
             team[idx] += f"({x}|"
         elif i in team_exp_indices:
             idx = team_exp_indices.index(i)
-            team[idx] += f"{x})"
+            team[idx] += f"{x})]"
         elif i in shop_id_indices:
             idx = shop_id_indices.index(i)
-            shop[idx] = pet_index[x]
+            shop[idx] = "[" + pet_index[x]
         elif i in shop_att_indices:
             idx = shop_att_indices.index(i)
             shop[idx] += f" ({x}|"
         elif i in shop_hp_indices:
             idx = shop_hp_indices.index(i)
-            shop[idx] += f"{x})"
+            shop[idx] += f"{x})]"
         elif i in food_id_indices:
             idx = food_id_indices.index(i)
-            food[idx] = food_index[x]
+            food[idx] = "[" + food_index[x] + "]"
+        elif i == 0:
+            out += f"{encoding_index[i].title()}: {x}"
         else:
-            out += f"{encoding_index[i]}: {x}\n"
-    out += " | ".join(team) + "\n"
-    out += " | ".join(shop) + "\n"
-    out += " | ".join(food)
-    
+            out += f" | {encoding_index[i].title()}: {x}"
+
+    team = [t if t else "[]" for t in team]
+    shop = [s if s else "[]" for s in shop]
+    food = [f if f else "[]" for f in food]
+    out += "\n" + " ".join(team)
+    out += "\n" + " ".join(shop)
+    out += "\n" + " ".join(food)
+
     return out
