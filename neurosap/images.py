@@ -41,3 +41,10 @@ att_imgs = {int(f[:-4]): cv2.imread(attack_dir + f) for f in os.listdir(attack_d
 # Health
 health_dir = "images/health/"
 hp_imgs = {int(f[:-4]): cv2.imread(health_dir + f) for f in os.listdir(health_dir)}
+
+# Levels
+level_dir = "images/levels/"
+# Level names must be converted to int later
+# due to underscore splitting level and experience
+# e.g. "1_0" is level 1 and experience 0
+lvl_imgs = {f[:-4]: cv2.imread(level_dir + f) for f in os.listdir(level_dir)}
