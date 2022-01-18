@@ -23,6 +23,10 @@ impl NeuroSAP {
     fn evolve(&mut self) {
         self.ns.evolve(&mut rand::thread_rng());
     }
+
+    fn finish_agent(&mut self) {
+        self.ns.finish_agent();
+    }
 }
 
 #[pymodule]
