@@ -6,6 +6,7 @@ from neurosap.images import (
     food_imgs,
     hp_imgs,
     num_imgs,
+    lvl_imgs,
     pet_imgs,
     trophy_imgs,
 )
@@ -24,6 +25,7 @@ def encode(rgb_img, gray_img, data: list[int]):
     data = encode_trophies(rgb_img, data)
     data = encode_numeric(gray_img, data)
     data = encode_stats(rgb_img, data)
+    data = encode_levels(rgb_img, data)
 
     return data
 
@@ -101,6 +103,21 @@ def encode_stats(img, data: list[int]):
     return data
 
 
+def encode_levels(img, data: list[int]):
+    for lvl, lvl_img in lvl_imgs.items():
+        lvl, exp = lvl.split("_")
+        lvl = int(lvl)
+        exp = int(exp)
+
+        result = cv2.matchTemplate(img, lvl_img, cv2.TM_CCOEFF_NORMED)
+        threshold = 0.95
+        loc = np.where(result >= threshold)
+        for pt in zip(*loc[::-1]):
+            data = encode_level_slot(lvl, exp, pt[0], data)
+
+    return data
+
+
 def encode_slot(item: str, x: int, y: int, data: list[int]):
     """Encodes slot for pets and foods"""
     type = None
@@ -164,6 +181,18 @@ def encode_health_slot(hp: int, x: int, y: int, data: list[int]):
     # Distance from y value determines if this is a team or shop pet
     index = 6 + slot * 6 if abs(y - 312) < abs(y - 504) else 36 + slot * 3
     data[index] = hp
+    return data
+
+
+def encode_level_slot(level: int, exp: int, x: int, data: list[int]):
+    """Encodes slot for level and experience values"""
+    valid_x = [301, 397, 493, 589, 685]
+    # Finds minimum distance from x value
+    slot, _ = min(enumerate(valid_x), key=lambda vx: abs(x - vx[1]))
+    lvl_idx, exp_idx = (8 + slot * 6, 9 + slot * 6)
+    data[lvl_idx] = level
+    data[exp_idx] = exp
+
     return data
 
 
