@@ -13,5 +13,5 @@ version = "0.15.1"
 features = ["extension-module"]
 
 [dependencies]
-neurosap = { path = "../neurosap" }
+neurosap-core = { path = "../neurosap" }
 rand = "0.8.4"

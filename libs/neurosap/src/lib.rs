@@ -2,6 +2,11 @@
 
 use rand::RngCore;
 
+use std::fs::File;
+use std::path::Path;
+
+use serde::{Deserialize, Serialize};
+
 use lib_genetic_algorithm as ga;
 use lib_neural_network as nn;
 
@@ -15,6 +20,13 @@ mod brain;
 pub struct NeuroSAP {
     population: Vec<Agent>,
     ga: ga::GeneticAlgorithm<ga::RouletteWheelSelection>,
+}
+
+#[derive(Deserialize, Serialize)]
+crate struct AgentArchive {
+    chromosome: Vec<f32>,
+    fitness: f32,
+    finished: bool,
 }
 
 impl NeuroSAP {
@@ -76,5 +88,49 @@ impl NeuroSAP {
             .into_iter()
             .map(|individual| individual.into_agent())
             .collect();
+    }
+
+    pub fn save(&self, filename: &str) {
+        let path = Path::new(filename);
+        let file = File::create(path).unwrap();
+        let archives: Vec<AgentArchive> = self
+            .population
+            .iter()
+            .map(|agent| AgentArchive::from(agent))
+            .collect();
+
+        serde_json::to_writer(file, &archives).unwrap();
+    }
+
+    pub fn population_count(&self) -> usize {
+        self.population.len()
+    }
+}
+
+pub fn load(filename: &str) -> NeuroSAP {
+    // Load population
+    let path = Path::new(filename);
+    let file = File::open(path).unwrap();
+    let archives: Vec<AgentArchive> = serde_json::from_reader(file).unwrap();
+    let population = archives
+        .into_iter()
+        .map(|archive| Agent::from(archive))
+        .collect();
+    let ga = ga::GeneticAlgorithm::new(
+        ga::RouletteWheelSelection::new(),
+        ga::UniformCrossover::new(),
+        ga::GaussianMutation::new(0.05, 0.3),
+    );
+
+    NeuroSAP { population, ga }
+}
+
+impl From<&Agent> for AgentArchive {
+    fn from(agent: &Agent) -> Self {
+        AgentArchive {
+            chromosome: agent.as_chromosome().into_iter().collect(),
+            fitness: agent.fitness,
+            finished: agent.finished,
+        }
     }
 }

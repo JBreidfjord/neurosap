@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 
-use neurosap as nsap;
+use neurosap_core as nsap;
 
 #[pyclass(unsendable)]
 struct NeuroSAP {
@@ -27,10 +27,26 @@ impl NeuroSAP {
     fn finish_agent(&mut self, fitness: f32) {
         self.ns.finish_agent(fitness);
     }
+
+    fn save(&self, filename: &str) {
+        self.ns.save(filename);
+    }
+
+    fn population_count(&self) -> usize {
+        self.ns.population_count()
+    }
+}
+
+#[pyfunction]
+fn load(filename: &str) -> NeuroSAP {
+    NeuroSAP {
+        ns: nsap::load(filename),
+    }
 }
 
 #[pymodule]
 fn neurosap(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<NeuroSAP>()?;
+    m.add_function(wrap_pyfunction!(load, m)?)?;
     Ok(())
 }

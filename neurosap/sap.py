@@ -10,15 +10,21 @@ from neurosap.index import decoding_str_index as decoding_index
 
 
 class SAP:
-    def __init__(self, population_count: int = 10):
+    def __init__(self, population_count: int = 10, ns: neurosap.NeuroSAP = None):
+        self.ns = neurosap.NeuroSAP(population_count) if ns is None else ns
         self.population_count = population_count
-        self.ns = neurosap.NeuroSAP(population_count)
         self.finished_agents = 0
         self.data = [-1 for _ in range(51)]
 
         self.timer = 5
         self._excess_gold = 0
         self.turn_time = time.perf_counter()
+        
+    @classmethod
+    def load(cls, filepath: str):
+        ns = neurosap.load(filepath)
+        population_count = ns.population_count()
+        return cls(population_count, ns)
 
     def start(self):
         logging.info("Starting Generation")
@@ -260,3 +266,6 @@ class SAP:
             # We don't want to reset the data for held items
             stored_indices = [7, 13, 19, 25, 31]
             self.data = [-1 if i not in stored_indices else self.data[i] for i in range(52)]
+
+    def save(self, filepath: str):
+        self.ns.save(filepath)

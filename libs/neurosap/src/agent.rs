@@ -27,6 +27,18 @@ impl Agent {
         }
     }
 
+    crate fn from_chromosome_with_fitness(
+        chromosome: ga::Chromosome,
+        fitness: f32,
+        finished: bool,
+    ) -> Agent {
+        Agent {
+            brain: Brain::from_chromosome(chromosome),
+            fitness,
+            finished,
+        }
+    }
+
     pub fn fitness(&self) -> f32 {
         self.fitness
     }
@@ -34,5 +46,15 @@ impl Agent {
     pub fn finish(&mut self, fitness: f32) {
         self.fitness = fitness;
         self.finished = true;
+    }
+}
+
+impl From<AgentArchive> for Agent {
+    fn from(archive: AgentArchive) -> Self {
+        Agent::from_chromosome_with_fitness(
+            archive.chromosome.into_iter().collect(),
+            archive.fitness,
+            archive.finished,
+        )
     }
 }

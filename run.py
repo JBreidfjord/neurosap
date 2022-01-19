@@ -1,16 +1,24 @@
 # %%
-from neurosap.sap import SAP
 import logging
+import os
+
+from neurosap.sap import SAP
 
 # %%
 logging.basicConfig(
     filename="logs/program.log",
     level=logging.DEBUG,
     datefmt="%d/%m/%Y %H:%M:%S",
-    format="%(asctime)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(message)s",
 )
-sap = SAP(10)
+if os.path.exists("population.json"):
+    sap = SAP.load("population.json")
+else:
+    sap = SAP(10)
+
 # %%
 # Runs a single generation
 sap.start()
+# %%
+sap.save("population.json")
 # %%

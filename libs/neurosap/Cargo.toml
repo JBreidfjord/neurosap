@@ -1,5 +1,5 @@
 [package]
-name = "neurosap"
+name = "neurosap-core"
 version = "0.1.0"
 authors = ["Jonathan Breidfjord <jbreidfjord@gmail.com>"]
 edition = "2021"
@@ -8,3 +8,5 @@ edition = "2021"
 lib-neural-network = { path = "../neural-network" }
 lib-genetic-algorithm = { path = "../genetic-algorithm" }
 rand = "0.8.4"
+serde_json = "1.0.75"
+serde = { version = "1.0.133", features = ["derive"] }
